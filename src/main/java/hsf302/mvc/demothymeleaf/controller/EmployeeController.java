@@ -1,10 +1,13 @@
 package hsf302.mvc.demothymeleaf.controller;
 
+import hsf302.mvc.demothymeleaf.model.Employee;
 import hsf302.mvc.demothymeleaf.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Controller
@@ -20,4 +23,21 @@ public class EmployeeController {
        model.addAttribute("listEmployees",employeeService.getAllEmployees());
         return "index"; // This should return the name of the view template to be rendered
     }
+
+
+    @GetMapping("/showNewEmployeeForm")
+    public  String showNewEmployeeForm(Model model){
+        //create model attribute to bind form data
+        Employee employee = new Employee();
+        model.addAttribute("employee",employee);
+        return "new_employee";
+    }
+    @PostMapping("/saveEmployee")
+    public String saveEmployee(@ModelAttribute("employee") Employee employee){
+        //save employee to database
+        this.employeeService.saveEmployee(employee);
+
+        return "redirect:/";
+    }
+
 }

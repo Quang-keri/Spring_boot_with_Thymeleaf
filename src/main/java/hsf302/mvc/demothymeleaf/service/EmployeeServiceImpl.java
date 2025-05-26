@@ -18,4 +18,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         // For now, we can return an empty list or throw an exception.
         return employeeRepository.findAll(); // Placeholder implementation
     }
+
+    @Override
+    public void saveEmployee(Employee employee) {
+      employeeRepository.save(employee);
+    }
+
+
 }
