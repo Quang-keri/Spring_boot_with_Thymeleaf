@@ -41,6 +41,41 @@
         </tr>
         </tbody>
     </table>
+
+    <div th:if="${totalPages > 1}">
+        <nav>
+            <ul class="pagination justify-content-center">
+
+                <!-- Page numbers -->
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{'/page/' + ${i}}">[[${i}]]</a>
+                </li>
+
+                <!-- Next -->
+                <li class="page-item" th:if="${currentPage < totalPages}">
+                    <a class="page-link" th:href="@{'/page/' + ${currentPage + 1}}">Next</a>
+                </li>
+                <li class="page-item disabled" th:unless="${currentPage < totalPages}">
+                    <span class="page-link">Next</span>
+                </li>
+
+                <!-- Last  -->
+                <li class="page-item" th:if="${currentPage > 1}">
+                    <a class="page-link" th:href="@{'/page/' + ${currentPage - 1}}">Last</a>
+                </li>
+                <li class="page-item disabled" th:unless="${currentPage > 1}">
+                    <span class="page-link">Last</span>
+                </li>
+
+            </ul>
+        </nav>
+        <p class="text-center">Total Rows: [[${totalItems}]]</p>
+    </div>
+
+
+
+
 </div>
 </body>
 </html> ``
