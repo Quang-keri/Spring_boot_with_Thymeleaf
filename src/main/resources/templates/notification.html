@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Thông báo real-time</title>
+  <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+  <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .notification-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      width: 300px;
+    }
+    .notification-icon {
+      font-size: 30px;
+      cursor: pointer;
+      background: white;
+      padding: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .notification-list {
+      display: none;
+      margin-top: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .notification-list.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<h1 class="text-center mt-5">Trang đặt hàng</h1>
+<form class="text-center mt-4" action="/submit-order" method="post">
+  <button class="btn btn-primary">Đặt đơn hàng</button>
+</form>
+
+<div class="notification-container">
+  <div class="notification-icon" onclick="toggleNotificationList()">🔔</div>
+  <div id="notificationList" class="notification-list">
+    <div th:each="noti : ${notifications}" class="alert alert-info p-2 mb-2">
+      <span th:text="${noti.message}"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const socket = new SockJS('/ws');
+  const stompClient = Stomp.over(socket);
+
+  stompClient.connect({}, function (frame) {
+    stompClient.subscribe('/topic/notifications', function (notification) {
+      showNotification(notification.body);
+    });
+  });
+
+  function showNotification(message) {
+    const notiList = document.getElementById("notificationList");
+    const newDiv = document.createElement("div");
+    newDiv.classList.add("alert", "alert-success", "p-2", "mb-2");
+    newDiv.textContent = message;
+    notiList.prepend(newDiv);
+    notiList.classList.add("show");
+  }
+
+  function toggleNotificationList() {
+    document.getElementById("notificationList").classList.toggle("show");
+  }
+</script>
+</body>
+</html>
